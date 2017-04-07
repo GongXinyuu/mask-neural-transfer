@@ -91,8 +91,8 @@ content_weight = 0.5
 
 # dimensions of the generated picture.
 width, height = load_img(base_image_path).size
-img_nrows = width
-img_ncols = height
+img_nrows = height
+img_ncols = width
 
 # util function to open, resize and format pictures into appropriate tensors
 
