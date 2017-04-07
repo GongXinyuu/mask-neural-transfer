@@ -79,9 +79,9 @@ from keras import backend as K
 #                     help='Total Variation weight.')
 #
 # args = parser.parse_args()
-base_image_path = '/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor.JPG '
-style_reference_image_path = '/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/starry_night.jpg'
-result_prefix = '/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/result_v1.0.jpg'
+base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor.JPG"
+style_reference_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/starry_night.jpg"
+result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/result_v1.0.jpg"
 iterations = 10
 
 # these are the weights of the different loss components
