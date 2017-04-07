@@ -62,32 +62,32 @@ import argparse
 from keras.applications import vgg16
 from keras import backend as K
 # 以下为输入变量的设置
-parser = argparse.ArgumentParser(description='Neural style transfer with Keras.')
-parser.add_argument('base_image_path', metavar='base', type=str,
-                    help='Path to the image to transform.')
-parser.add_argument('style_reference_image_path', metavar='ref', type=str,
-                    help='Path to the style reference image.')
-parser.add_argument('result_prefix', metavar='res_prefix', type=str,
-                    help='Prefix for the saved results.')
-parser.add_argument('--iter', type=int, default=10, required=False,
-                    help='Number of iterations to run.')
-parser.add_argument('--content_weight', type=float, default=0.025, required=False,
-                    help='Content weight.')
-parser.add_argument('--style_weight', type=float, default=1.0, required=False,
-                    help='Style weight.')
-parser.add_argument('--tv_weight', type=float, default=1.0, required=False,
-                    help='Total Variation weight.')
-
-args = parser.parse_args()
-base_image_path = args.base_image_path
-style_reference_image_path = args.style_reference_image_path
-result_prefix = args.result_prefix
-iterations = args.iter
+# parser = argparse.ArgumentParser(description='Neural style transfer with Keras.')
+# parser.add_argument('base_image_path', metavar='base', type=str,
+#                     help='Path to the image to transform.')
+# parser.add_argument('style_reference_image_path', metavar='ref', type=str,
+#                     help='Path to the style reference image.')
+# parser.add_argument('result_prefix', metavar='res_prefix', type=str,
+#                     help='Prefix for the saved results.')
+# parser.add_argument('--iter', type=int, default=10, required=False,
+#                     help='Number of iterations to run.')
+# parser.add_argument('--content_weight', type=float, default=0.025, required=False,
+#                     help='Content weight.')
+# parser.add_argument('--style_weight', type=float, default=1.0, required=False,
+#                     help='Style weight.')
+# parser.add_argument('--tv_weight', type=float, default=1.0, required=False,
+#                     help='Total Variation weight.')
+#
+# args = parser.parse_args()
+base_image_path = '/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor.JPG '
+style_reference_image_path = '/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/starry_night.jpg'
+result_prefix = '/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/result_v1.0.jpg'
+iterations = 10
 
 # these are the weights of the different loss components
-total_variation_weight = args.tv_weight
-style_weight = args.style_weight
-content_weight = args.content_weight
+total_variation_weight = 1.0
+style_weight = 0.5
+content_weight = 0.5
 
 # dimensions of the generated picture.
 width, height = load_img(base_image_path).size
@@ -98,10 +98,10 @@ img_ncols = int(width * img_nrows / height)
 
 
 def preprocess_image(image_path):
-    img = load_img(image_path, target_size=(img_nrows, img_ncols))
-    img = img_to_array(img)
-    img = np.expand_dims(img, axis=0)
-    img = vgg16.preprocess_input(img)
+    img = load_img(image_path, target_size=(img_nrows, img_ncols))  # 创建实例
+    img = img_to_array(img) # 将图片实例转化为张量
+    img = np.expand_dims(img, axis=0)   # 将该矩阵沿第一维展开
+    img = vgg16.preprocess_input(img)   # 零均值化，即减去训练vgg16的数据集每个通道的均值
     return img
 
 # util function to convert a tensor into a valid image
@@ -119,12 +119,12 @@ def deprocess_image(x):
     x[:, :, 2] += 123.68
     # 'BGR'->'RGB'
     x = x[:, :, ::-1]
-    x = np.clip(x, 0, 255).astype('uint8')
+    x = np.clip(x, 0, 255).astype('uint8')  # 将数值限制在0~255
     return x
 
 # get tensor representations of our images
-base_image = K.variable(preprocess_image(base_image_path))
-style_reference_image = K.variable(preprocess_image(style_reference_image_path))
+base_image = K.variable(preprocess_image(base_image_path))  # 创建base预处理图片实例
+style_reference_image = K.variable(preprocess_image(style_reference_image_path))    # 创建style预处理图片实例
 
 # this will contain our generated image
 if K.image_data_format() == 'channels_first':
@@ -133,6 +133,7 @@ else:
     combination_image = K.placeholder((1, img_nrows, img_ncols, 3))
 
 # combine the 3 images into a single Keras tensor
+# 作为一个串联的整体输入，类似于一个batch
 input_tensor = K.concatenate([base_image,
                               style_reference_image,
                               combination_image], axis=0)
@@ -155,7 +156,7 @@ outputs_dict = dict([(layer.name, layer.output) for layer in model.layers])
 def gram_matrix(x):
     assert K.ndim(x) == 3
     if K.image_data_format() == 'channels_first':
-        features = K.batch_flatten(x)
+        features = K.batch_flatten(x)   # 张成二维张量
     else:
         features = K.batch_flatten(K.permute_dimensions(x, (2, 0, 1)))
     gram = K.dot(features, K.transpose(features))
