@@ -79,9 +79,10 @@ from keras import backend as K
 #                     help='Total Variation weight.')
 #
 # args = parser.parse_args()
-base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/UESTC.JPG"
+base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor2.JPeG"
+mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor2_pascal_voc.png"
 style_reference_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/starry_night.jpg"
-result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/result_v1.1.jpg"
+result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/result_Taylor2_v1.1.jpg"
 iterations = 10
 
 # these are the weights of the different loss components
@@ -127,10 +128,11 @@ base_image = K.variable(preprocess_image(base_image_path))  # 创建base预处�
 style_reference_image = K.variable(preprocess_image(style_reference_image_path))    # 创建style预处理图片实例
 
 # this will contain our generated image
-if K.image_data_format() == 'channels_first':
-    combination_image = K.placeholder((1, 3, img_nrows, img_ncols)) # 占位符
-else:
-    combination_image = K.placeholder((1, img_nrows, img_ncols, 3))
+# if K.image_data_format() == 'channels_first':
+#     combination_image = K.placeholder((1, 3, img_nrows, img_ncols)) # 占位符
+# else:
+#     combination_image = K.placeholder((1, img_nrows, img_ncols, 3))
+combination_image = K.variable(preprocess_image(base_image_path))   # 从base开始初始化
 
 # combine the 3 images into a single Keras tensor
 # 作为一个串联的整体输入，类似于一个batch
@@ -228,7 +230,7 @@ if isinstance(grads, (list, tuple)):
 else:
     outputs.append(grads)
 
-f_outputs = K.function([combination_image], outputs)    # 将outputs输出到combination_image
+f_outputs = K.function([combination_image], outputs)    # Output values as Numpy arrays
 
 
 def eval_loss_and_grads(x):
