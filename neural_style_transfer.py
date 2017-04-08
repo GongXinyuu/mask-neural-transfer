@@ -79,20 +79,20 @@ from keras import backend as K
 #                     help='Total Variation weight.')
 #
 # args = parser.parse_args()
-base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor.JPG"
+base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/UESTC.JPG"
 style_reference_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/starry_night.jpg"
-result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/result_v1.0.jpg"
+result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/result_v1.1.jpg"
 iterations = 10
 
 # these are the weights of the different loss components
 total_variation_weight = 1.0
-style_weight = 0.5
-content_weight = 0.5
+style_weight = 1.0
+content_weight = 0.01
 
 # dimensions of the generated picture.
 width, height = load_img(base_image_path).size
-img_nrows = height
-img_ncols = width
+img_nrows = 400 #height
+img_ncols = int(width * img_nrows / height) #width
 
 # util function to open, resize and format pictures into appropriate tensors
 
@@ -128,7 +128,7 @@ style_reference_image = K.variable(preprocess_image(style_reference_image_path))
 
 # this will contain our generated image
 if K.image_data_format() == 'channels_first':
-    combination_image = K.placeholder((1, 3, img_nrows, img_ncols))
+    combination_image = K.placeholder((1, 3, img_nrows, img_ncols)) # 占位符
 else:
     combination_image = K.placeholder((1, img_nrows, img_ncols, 3))
 
@@ -136,7 +136,7 @@ else:
 # 作为一个串联的整体输入，类似于一个batch
 input_tensor = K.concatenate([base_image,
                               style_reference_image,
-                              combination_image], axis=0)
+                              combination_image], axis=0)   # 即input_tensor具有四维
 
 # build the VGG16 network with our 3 images as input
 # the model will be loaded with pre-trained ImageNet weights
@@ -193,8 +193,8 @@ def content_loss(base, combination):
 def total_variation_loss(x):
     assert K.ndim(x) == 4
     if K.image_data_format() == 'channels_first':
-        a = K.square(x[:, :, :img_nrows - 1, :img_ncols - 1] - x[:, :, 1:, :img_ncols - 1])
-        b = K.square(x[:, :, :img_nrows - 1, :img_ncols - 1] - x[:, :, :img_nrows - 1, 1:])
+        a = K.square(x[:, :, :img_nrows - 1, :img_ncols - 1] - x[:, :, 1:, :img_ncols - 1]) #错位相减，保持平滑
+        b = K.square(x[:, :, :img_nrows - 1, :img_ncols - 1] - x[:, :, :img_nrows - 1, 1:]) #错位相减，保持平滑
     else:
         a = K.square(x[:, :img_nrows - 1, :img_ncols - 1, :] - x[:, 1:, :img_ncols - 1, :])
         b = K.square(x[:, :img_nrows - 1, :img_ncols - 1, :] - x[:, :img_nrows - 1, 1:, :])
@@ -228,7 +228,7 @@ if isinstance(grads, (list, tuple)):
 else:
     outputs.append(grads)
 
-f_outputs = K.function([combination_image], outputs)
+f_outputs = K.function([combination_image], outputs)    # 将outputs输出到combination_image
 
 
 def eval_loss_and_grads(x):
