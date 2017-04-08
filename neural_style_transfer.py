@@ -58,7 +58,7 @@ import numpy as np
 from scipy.optimize import fmin_l_bfgs_b
 import time
 import argparse
-
+from keras.utils import plot_model
 from keras.applications import vgg16
 from keras import backend as K
 # 以下为输入变量的设置
@@ -82,14 +82,14 @@ from keras import backend as K
 base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor2.JPeG"
 mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor2_pascal_voc.png"
 style_reference_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/starry_night.jpg"
-result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/result_Taylor2_v1.1.jpg"
+result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/maskeq1.0"
 iterations = 10
 
 # these are the weights of the different loss components
 total_variation_weight = 1.0
 style_weight = 1.0
 content_weight = 0.01
-
+mask_attenuation_weight = 1.0   # range from 0.0 to 1.0, largest attenuation at 1.0
 # dimensions of the generated picture.
 width, height = load_img(base_image_path).size
 img_nrows = 400 #height
@@ -101,7 +101,7 @@ img_ncols = int(width * img_nrows / height) #width
 def preprocess_image(image_path):
     img = load_img(image_path, target_size=(img_nrows, img_ncols))  # 创建实例
     img = img_to_array(img) # 将图片实例转化为张量
-    img = np.expand_dims(img, axis=0)   # 将该矩阵沿第一维展开
+    img = np.expand_dims(img, axis=0)   # 在首部增加一个维度
     img = vgg16.preprocess_input(img)   # 零均值化，即减去训练vgg16的数据集每个通道的均值
     return img
 
@@ -126,13 +126,13 @@ def deprocess_image(x):
 # get tensor representations of our images
 base_image = K.variable(preprocess_image(base_image_path))  # 创建base预处理图片实例
 style_reference_image = K.variable(preprocess_image(style_reference_image_path))    # 创建style预处理图片实例
-
+mask_image = img_to_array(load_img(mask_path, target_size=(img_nrows, img_ncols)))
 # this will contain our generated image
-# if K.image_data_format() == 'channels_first':
-#     combination_image = K.placeholder((1, 3, img_nrows, img_ncols)) # 占位符
-# else:
-#     combination_image = K.placeholder((1, img_nrows, img_ncols, 3))
-combination_image = K.variable(preprocess_image(base_image_path))   # 从base开始初始化
+if K.image_data_format() == 'channels_first':
+    combination_image = K.placeholder((1, 3, img_nrows, img_ncols)) # 占位符
+else:
+    combination_image = K.placeholder((1, img_nrows, img_ncols, 3))
+
 
 # combine the 3 images into a single Keras tensor
 # 作为一个串联的整体输入，类似于一个batch
@@ -241,9 +241,13 @@ def eval_loss_and_grads(x):
     outs = f_outputs([x])
     loss_value = outs[0]
     if len(outs[1:]) == 1:
-        grad_values = outs[1].flatten().astype('float64')
+        grad_values = outs[1] * (np.ones(outs[1].shape) - mask_attenuation_weight * (mask_image > 0))  #将mask内的grads削弱
+        grad_values = grad_values.flatten().astype('float64')
+
     else:
-        grad_values = np.array(outs[1:]).flatten().astype('float64')
+        grad_values = np.array(outs[1:]) * (np.ones(outs[1].shape) - mask_attenuation_weight * (mask_image > 0))
+        grad_values = grad_values.flatten().astype('float64')
+
     return loss_value, grad_values
 
 # this Evaluator class makes it possible
@@ -278,11 +282,12 @@ evaluator = Evaluator()
 
 # run scipy-based optimization (L-BFGS) over the pixels of the generated image
 # so as to minimize the neural style loss
-if K.image_data_format() == 'channels_first':
-    x = np.random.uniform(0, 255, (1, 3, img_nrows, img_ncols)) - 128.
-else:
-    x = np.random.uniform(0, 255, (1, img_nrows, img_ncols, 3)) - 128.
-
+# if K.image_data_format() == 'channels_first':
+#     x = np.random.uniform(0, 255, (1, 3, img_nrows, img_ncols)) - 128.
+# else:
+#     x = np.random.uniform(0, 255, (1, img_nrows, img_ncols, 3)) - 128.
+x = preprocess_image(base_image_path)   # initial with base image
+plot_model(model, to_file='nerual_transfer_model.png', show_shapes = True)
 for i in range(iterations):
     print('Start of iteration', i)
     start_time = time.time()
