@@ -7,16 +7,16 @@ This is an advanced implementation of the paper [A Neural Algorithm of Artistic 
 
 Base image:
 
-![Taylor2](/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor2.jpeg)
+![Taylor2](https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/Taylor2.jpeg)
 
 Mask image:
 
-![Taylor2_pascal_voc](/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor2_pascal_voc.png)
+![Taylor2_pascal_voc](https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/Taylor2_pascal_voc.png)
 
 Style reference image:
 
-![starry_night](/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/starry_night.jpg)
+![starry_night](https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/starry_night.jpg)
 
 Result:
 
-![maskeq0.5v0.5_at_iteration_9](/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/maskeq0.5v0.5_at_iteration_9.png)
+![maskeq0.5v0.5_at_iteration_9](https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/maskeq0.5v0.5_at_iteration_9.png)
