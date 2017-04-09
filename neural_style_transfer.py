@@ -82,14 +82,14 @@ from keras import backend as K
 base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor2.JPeG"
 mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor2_pascal_voc.png"
 style_reference_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/starry_night.jpg"
-result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/maskeq1.0"
+result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/maskeq0.5v0.5"
 iterations = 10
 
 # these are the weights of the different loss components
-total_variation_weight = 1.0
-style_weight = 1.0
-content_weight = 0.01
-mask_attenuation_weight = 1.0   # range from 0.0 to 1.0, largest attenuation at 1.0
+total_variation_weight = 8.5e-5
+style_weight = 100
+content_weight = 0.0
+mask_attenuation_weight = 0.5   # range from 0.0 to 1.0, largest attenuation at 1.0
 # dimensions of the generated picture.
 width, height = load_img(base_image_path).size
 img_nrows = 400 #height
@@ -126,7 +126,7 @@ def deprocess_image(x):
 # get tensor representations of our images
 base_image = K.variable(preprocess_image(base_image_path))  # 创建base预处理图片实例
 style_reference_image = K.variable(preprocess_image(style_reference_image_path))    # 创建style预处理图片实例
-mask_image = img_to_array(load_img(mask_path, target_size=(img_nrows, img_ncols)))
+mask_image = img_to_array(load_img(mask_path, target_size=(img_nrows, img_ncols)))  # mask矩阵化
 # this will contain our generated image
 if K.image_data_format() == 'channels_first':
     combination_image = K.placeholder((1, 3, img_nrows, img_ncols)) # 占位符
@@ -287,6 +287,12 @@ evaluator = Evaluator()
 # else:
 #     x = np.random.uniform(0, 255, (1, img_nrows, img_ncols, 3)) - 128.
 x = preprocess_image(base_image_path)   # initial with base image
+# mask_image = np.expand_dims(mask_image, axis=0)
+# if K.image_data_format() == 'channels_first':
+#     env = (np.random.uniform(0, 255, (1, 3, img_nrows, img_ncols)) - 128.) * (mask_image == 0)
+# else:
+#     env = (np.random.uniform(0, 255, (1, img_nrows, img_ncols, 3)) - 128.) * (mask_image == 0)
+# x = x * (mask_image > 0) + env
 plot_model(model, to_file='nerual_transfer_model.png', show_shapes = True)
 for i in range(iterations):
     print('Start of iteration', i)
