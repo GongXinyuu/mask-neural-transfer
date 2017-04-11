@@ -62,17 +62,17 @@ from keras.utils import plot_model
 from keras.applications import vgg16
 from keras import backend as K
 
-base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor2.JPeG"
-mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor2_pascal_voc.png"
+base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Dawn_Sky.jpg"
+mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Dawn-Sky-Mask-inv.png"
 style_reference_background_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/starry_night.jpg"
 style_reference_key_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/picasso_selfport1907.jpg"
-result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/mix_maskv0.1"
+result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/skymask"
 iterations = 10
 
 # these are the weights of the different loss components
 total_variation_weight = 8.5e-5 # A larger value may cause blur
 style_weight = 100
-content_weight = 0.0
+content_weight = 1.0
 mask_attenuation_weight = 0.0   # range from 0.0 to 1.0, largest attenuation at 1.0
 # dimensions of the generated picture.
 width, height = load_img(base_image_path).size
