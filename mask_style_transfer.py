@@ -62,17 +62,17 @@ from keras.utils import plot_model
 from keras.applications import vgg16
 from keras import backend as K
 
-base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Dawn_Sky.jpg"
-mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Dawn-Sky-Mask-inv.png"
-style_reference_background_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/starry_night.jpg"
-style_reference_key_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/picasso_selfport1907.jpg"
-result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/skymask"
+base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor2.jpeg"
+mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor2_pascal_voc.png"
+style_reference_background_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/blue_swirls.jpg"
+style_reference_key_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/escher_sphere.jpg"
+result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/taymix2"
 iterations = 10
 
 # these are the weights of the different loss components
 total_variation_weight = 8.5e-5 # A larger value may cause blur
 style_weight = 100
-content_weight = 1.0
+# content_weight = 1.0
 mask_attenuation_weight = 0.0   # range from 0.0 to 1.0, largest attenuation at 1.0
 # dimensions of the generated picture.
 width, height = load_img(base_image_path).size
@@ -123,8 +123,7 @@ else:
 
 # combine the 3 images into a single Keras tensor
 # 作为一个串联的整体输入，类似于一个batch
-input_tensor = K.concatenate([base_image,
-                              style_reference_key_image,
+input_tensor = K.concatenate([style_reference_key_image,
                               style_reference_background_image,
                               combination_image * mask_key_bool,
                               combination_image * mask_background_bool], axis=0)   # 即input_tensor具有四维
@@ -174,8 +173,8 @@ def style_loss(style, combination):
 # base image in the generated image
 
 
-def content_loss(base, combination):
-    return K.sum(K.square(combination - base))
+# def content_loss(base, combination):
+#     return K.sum(K.square(combination - base))
 
 # the 3rd loss function, total variation loss,
 # designed to keep the generated image locally coherent
@@ -195,20 +194,20 @@ def total_variation_loss(x):
 
 loss = K.variable(0.)
 layer_features = outputs_dict['block4_conv2']
-base_image_features = layer_features[0, :, :, :]
-combination_features = layer_features[3, :, :, :] + layer_features[4, :, :, :]
-loss += content_weight * content_loss(base_image_features,
-                                      combination_features)
+# base_image_features = layer_features[0, :, :, :]
+combination_features = layer_features[2, :, :, :] + layer_features[3, :, :, :]
+# loss += content_weight * content_loss(base_image_features,
+#                                       combination_features)
 
 feature_layers = ['block1_conv1', 'block2_conv1',
                   'block3_conv1', 'block4_conv1',
                   'block5_conv1']
 for layer_name in feature_layers:
     layer_features = outputs_dict[layer_name]
-    style_reference_key_features = layer_features[1, :, :, :]
-    style_reference_background_features = layer_features[2, :, :, :]
-    combination_key_features = layer_features[3, :, :, :]
-    combination_background_features = layer_features[4, :, :, :]
+    style_reference_key_features = layer_features[0, :, :, :]
+    style_reference_background_features = layer_features[1, :, :, :]
+    combination_key_features = layer_features[2, :, :, :]
+    combination_background_features = layer_features[3, :, :, :]
     sl_key = style_loss(style_reference_key_features, combination_key_features)
     sl_background = style_loss(style_reference_background_features, combination_background_features)
     loss += (style_weight / len(feature_layers)) * (sl_key + sl_background)
