@@ -15,7 +15,7 @@ This script will produce a combination image which is mixed with two different s
 ## Examples
 ### [weighted_neural_style_transfer.py](weighted_neural_style_transfer.py)
 <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/Taylor2.jpeg" width=49% height=300 alt="Taylor Swift"> <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/starry_night.jpg" width=49% height=300 alt="starry night">
-<br><br> Results after 10 iterations using the INetwork<br>
+<br><br> Results after 10 iterations <br>
 <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/maskeq0.5v0.5_at_iteration_9.png" width=98% height=550 alt="blue moon lake style transfer">
 
 ### [mask_style_transfer.py](mask_style_transfer.py)
