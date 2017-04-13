@@ -13,44 +13,15 @@ This script requires a base image ,a mask of the base image and two different st
 This script will produce a combination image which is mixed with two different styles. One is generated into the key elements of the base image, and the other is generated into the background.
 
 ## Examples
-
 ### [weighted_neural_style_transfer.py](weighted_neural_style_transfer.py)
-
-Base image:
-
-![Taylor2](https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/Taylor2.jpeg)
-
-Mask image:
-
-![Taylor2_pascal_voc](https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/Taylor2_pascal_voc.png)
-
-Style reference image:
-
-![starry_night](https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/starry_night.jpg)
-
-Result:
-
-![maskeq0.5v0.5_at_iteration_9](https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/maskeq0.5v0.5_at_iteration_9.png)
+<img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/Taylor2.jpeg" width=49% height=300 alt="Taylor Swift"> <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/starry_night.jpg" width=49% height=300 alt="starry night">
+<br><br> Results after 10 iterations using the INetwork<br>
+<img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/maskeq0.5v0.5_at_iteration_9.png" width=98% height=450 alt="blue moon lake style transfer">
 
 ### [mask_style_transfer.py](mask_style_transfer.py)
+<img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/starry_night.jpg" height=300 width=50% alt="dawn sky anime"> <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/picasso_selfport1907.jpg" height=300 width=49%>
 
-Base image:
+<img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/Taylor2.jpeg" height=300 width=50%> <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/mix_maskv0.1_at_iteration_9.png" height=300 width=49% alt="dawn sky style transfer anime">
 
-![Taylor2](https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/Taylor2.jpeg)
 
-Mask image:
-
-![Taylor2_pascal_voc](https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/Taylor2_pascal_voc.png)
-
-Background style reference image:
-
-![starry_night](https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/starry_night.jpg)
-
-Key element style reference image:
-
-![picasso_selfport1907](https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/picasso_selfport1907.jpg)
-
-Result:
-
-![mix_maskv0.1_at_iteration_9](https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/mix_maskv0.1_at_iteration_9.png)
 
