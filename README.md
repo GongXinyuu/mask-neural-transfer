@@ -16,12 +16,18 @@ This script will produce a combination image which is mixed with two different s
 ### [weighted_neural_style_transfer.py](weighted_neural_style_transfer.py)
 <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/Taylor2.jpeg" width=49% height=300 alt="Taylor Swift"> <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/starry_night.jpg" width=49% height=300 alt="starry night">
 <br><br> Results after 10 iterations using the INetwork<br>
-<img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/maskeq0.5v0.5_at_iteration_9.png" width=98% height=450 alt="blue moon lake style transfer">
+<img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/maskeq0.5v0.5_at_iteration_9.png" width=98% height=550 alt="blue moon lake style transfer">
 
 ### [mask_style_transfer.py](mask_style_transfer.py)
+#### Examples1
 <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/starry_night.jpg" height=300 width=50% alt="dawn sky anime"> <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/picasso_selfport1907.jpg" height=300 width=49%>
 
 <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/Taylor2.jpeg" height=300 width=50%> <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/mix_maskv0.1_at_iteration_9.png" height=300 width=49% alt="dawn sky style transfer anime">
+
+#### Examples2
+<img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/blue_swirls.jpg" height=300 width=50% alt="dawn sky anime"> <img src="https://github.com/GloryDream/mask-neural-transfer/blob/master/pic/escher_sphere.jpg?raw=true" height=300 width=49%>
+
+<img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/Taylor2.jpeg" height=300 width=50%> <img src="https://github.com/GloryDream/mask-neural-transfer/blob/master/pic/taymix2_at_iteration_9.png?raw=true" height=300 width=49% alt="dawn sky style transfer anime">
 
 
 
