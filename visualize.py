@@ -2,6 +2,20 @@
 # -*- coding:utf8 -*-
 '''Neural style transfer with Keras.
 
+Run the script with:
+```
+python neural_style_transfer.py path_to_your_base_image.jpg path_to_your_reference.jpg prefix_for_results
+```
+e.g.:
+```
+python neural_style_transfer.py img/tuebingen.jpg img/starry_night.jpg results/my_result
+```
+Optional parameters:
+```
+--iter, To specify the number of iterations the style transfer takes place (Default is 10)
+--content_weight, The weight given to the content loss (Default is 0.025)
+--style_weight, The weight given to the style loss (Default is 1.0)
+--tv_weight, The weight given to the total variation loss (Default is 1.0)
 ```
 
 It is preferable to run this script on GPU, for speed.
@@ -51,12 +65,13 @@ base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Tayl
 mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/Taylor2_pascal_voc.png"
 style_reference_background_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/blue_swirls.jpg"
 style_reference_key_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/escher_sphere.jpg"
-result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/taymix3tv1"
-iterations = 15
+result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/taymix2"
+iterations = 10
 
 # these are the weights of the different loss components
-total_variation_weight = 1#8.5e-5 # A larger value may cause blur
+total_variation_weight = 8.5e-5 # A larger value may cause blur
 style_weight = 100
+# content_weight = 1.0
 mask_attenuation_weight = 0.0   # range from 0.0 to 1.0, largest attenuation at 1.0
 # dimensions of the generated picture.
 width, height = load_img(base_image_path).size
@@ -64,7 +79,6 @@ img_nrows = 400 #height
 img_ncols = int(width * img_nrows / height) #width
 
 # util function to open, resize and format pictures into appropriate tensors
-
 
 def preprocess_image(image_path):
     img = load_img(image_path, target_size=(img_nrows, img_ncols))  # 创建实例
@@ -98,7 +112,6 @@ style_reference_key_image = K.variable(preprocess_image(style_reference_key_imag
 mask_image = img_to_array(load_img(mask_path, target_size=(img_nrows, img_ncols)))  # mask矩阵化
 mask_key_bool = (mask_image > 0) * 1.0
 mask_background_bool = (mask_image == 0) * 1.0
-
 # this will contain our generated image
 if K.image_data_format() == 'channels_first':
     combination_image = K.placeholder((1, 3, img_nrows, img_ncols)) # 占位符
@@ -157,6 +170,10 @@ def style_loss(style, combination):
 # designed to maintain the "content" of the
 # base image in the generated image
 
+
+# def content_loss(base, combination):
+#     return K.sum(K.square(combination - base))
+
 # the 3rd loss function, total variation loss,
 # designed to keep the generated image locally coherent
 
@@ -175,8 +192,10 @@ def total_variation_loss(x):
 
 loss = K.variable(0.)
 layer_features = outputs_dict['block4_conv2']
+# base_image_features = layer_features[0, :, :, :]
 combination_features = layer_features[2, :, :, :] + layer_features[3, :, :, :]
-
+# loss += content_weight * content_loss(base_image_features,
+#                                       combination_features)
 
 feature_layers = ['block1_conv1', 'block2_conv1',
                   'block3_conv1', 'block4_conv1',
@@ -251,9 +270,8 @@ class Evaluator(object):
 
 evaluator = Evaluator()
 
-# run scipy-based optimization (L-BFGS) over the pixels of the generated image
-# so as to minimize the neural style loss
 x = preprocess_image(base_image_path)   # initial with base image
+
 plot_model(model, to_file='nerual_transfer_model.png', show_shapes = True)
 for i in range(iterations):
     print('Start of iteration', i)

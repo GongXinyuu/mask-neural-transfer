@@ -8,7 +8,7 @@ The generated image is initialized with the base image. This algorithm uses the 
 
 ### [mask_style_transfer.py](mask_style_transfer.py)
 
-This script requires a base image ,a mask of the base image(optional) and two different style reference images. 
+This script requires a base image ,a mask of the base image and two different style reference images. 
 
 This script will produce a combination image which is mixed with two different styles. One is generated into the key elements of the base image, and the other is generated into the background.
 
