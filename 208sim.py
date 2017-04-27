@@ -49,16 +49,22 @@ from keras import backend as K
 from vgg16featuremap import *
 
 base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/cat.jpg"
-mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/mask/mask0.png"
+# mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/mask/cat10mask.png"
 style_reference_background_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/starry_night.jpg"
 style_reference_key_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/picasso_selfport1907.jpg"
-result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/results/my"
-iterations = 101
+result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/results/sim208"
+mask0_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/mask/mask0.png"
+mask1_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/mask/mask1.png"
+mask2_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/mask/mask2.png"
+mask3_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/mask/mask3.png"
+mask4_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/mask/mask4.png"
+mask5_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/mask/mask5.png"
+iterations = 15
 
 # these are the weights of the different loss components
-total_variation_weight = 8.5e-5 # A larger value may cause blur
-style_weight = 100.0
-content_weight =0.0
+total_variation_weight = 1#8.5e-5 # A larger value may cause blur
+style_weight = 100
+# mask_attenuation_weight = 0.0   # range from 0.0 to 1.0, largest attenuation at 1.0
 # dimensions of the generated picture.
 width, height = load_img(base_image_path).size
 img_nrows = height
@@ -96,9 +102,17 @@ def deprocess_image(x):
 base_image = K.variable(preprocess_image(base_image_path))  # 创建base预处理图片实例
 style_reference_background_image = K.variable(preprocess_image(style_reference_background_image_path))    # 创建style预处理图片实例
 style_reference_key_image = K.variable(preprocess_image(style_reference_key_image_path))    # 创建style预处理图片实例
-mask_image = img_to_array(load_img(mask_path, target_size=(img_nrows, img_ncols)))  # mask矩阵化
-mask_key_bool = (mask_image > 0) * 1.0
-mask_background_bool = (mask_image == 0) * 1.0
+# mask_image = img_to_array(load_img(mask_path, target_size=(img_nrows, img_ncols)))  # mask矩阵化
+# mask_key_bool = (mask_image > 0) * 1.0
+# mask_background_bool = (mask_image == 0) * 1.0
+mask0_img = (np.expand_dims(img_to_array(load_img(mask0_path)), axis=0)[:,:,:,0] > 0) * 1.0
+mask1_img = (np.expand_dims(img_to_array(load_img(mask1_path)), axis=0)[:,:,:,0] > 0) * 1.0
+mask2_img = (np.expand_dims(img_to_array(load_img(mask2_path)), axis=0)[:,:,:,0] > 0) * 1.0
+mask3_img = (np.expand_dims(img_to_array(load_img(mask3_path)), axis=0)[:,:,:,0] > 0) * 1.0
+mask4_img = (np.expand_dims(img_to_array(load_img(mask4_path)), axis=0)[:,:,:,0] > 0) * 1.0
+# mask5_img = (np.expand_dims(img_to_array(load_img(mask5_path)), axis=0)[:,:,:,0] > 0) * 1.0
+
+mask_img = [mask0_img, mask1_img,mask2_img,mask3_img,mask4_img]
 
 # this will contain our generated image
 if K.image_data_format() == 'channels_first':
@@ -109,15 +123,16 @@ else:
 
 # combine the 3 images into a single Keras tensor
 # 作为一个串联的整体输入，类似于一个batch
-input_tensor = K.concatenate([combination_image * mask_key_bool,
-                              combination_image * mask_background_bool], axis=0)   # 即input_tensor具有四维
+# input_tensor = combination_image
+
+input_tensor = K.concatenate([combination_image], axis=0)
 
 # build the VGG16 network with our 3 images as input
 # the model will be loaded with pre-trained ImageNet weights
 model = vgg16.VGG16(input_tensor=input_tensor,
                     weights='imagenet', include_top=False)
 print('Model loaded.')
-
+# plot_model(model, to_file='nerual_transfer_modelFM.png', show_shapes = True)
 # get the symbolic outputs of each "key" layer (we gave them unique names).
 outputs_dict = dict([(layer.name, layer.output) for layer in model.layers])
 
@@ -155,8 +170,6 @@ def style_loss(style, combination):
 # an auxiliary loss function
 # designed to maintain the "content" of the
 # base image in the generated image
-def content_loss(base, combination):
-    return K.sum(K.square(combination - base))
 
 # the 3rd loss function, total variation loss,
 # designed to keep the generated image locally coherent
@@ -174,6 +187,14 @@ def total_variation_loss(x):
 
 # combine these loss functions into a single scalar
 
+loss = K.variable(0.)
+# layer_features = outputs_dict['block4_conv2']
+# combination_features = layer_features[2, :, :, :]
+
+# input_tensor = K.concatenate([style_reference_key_image,
+#                               style_reference_background_image,
+#                               combination_image], axis=0)
+
 feature_layers = ['block1_conv1', 'block2_conv1',
                   'block3_conv1', 'block4_conv1',
                   'block5_conv1']
@@ -182,24 +203,19 @@ modelFM = VGG16FM(input_tensor=None,
                     weights='imagenet', include_top=False)
 features_back = modelFM.predict(preprocess_image(style_reference_background_image_path))
 features_key = modelFM.predict(preprocess_image(style_reference_key_image_path))
-features_content = modelFM.predict(preprocess_image(base_image_path))
 count = 1
-
-loss = K.variable(0.)
-layer_features = outputs_dict['block4_conv2']
-base_image_features = features_content[4][0]
-combination_features = layer_features[0, :, :, :] + layer_features[1, :, :, :]
-loss += content_weight * content_loss(base_image_features,
-                                      combination_features)
 
 for layer_name in feature_layers:
     layer_features = outputs_dict[layer_name]
     style_reference_key_features = features_key[count][0]
     style_reference_background_features = features_back[count][0]
-    combination_key_features = layer_features[0, :, :, :]
-    combination_background_features = layer_features[1, :, :, :]
-    sl_key = style_loss(style_reference_key_features, combination_key_features)
-    sl_background = style_loss(style_reference_background_features, combination_background_features)
+    combination_features = layer_features[0]
+    mask_slice_key = np.expand_dims(mask_img[count-1][0], axis= -1)
+    comb_mask_key = combination_features * mask_slice_key
+    sl_key = style_loss(style_reference_key_features, comb_mask_key)
+    mask_slice_back = np.expand_dims((1.0 - mask_img[count-1][0]), axis =-1)
+    comb_mask_back = combination_features * mask_slice_back
+    sl_background = style_loss(style_reference_background_features, comb_mask_back)
     loss += (style_weight / len(feature_layers)) * (sl_key + sl_background)
     count += 1
 loss += total_variation_weight * total_variation_loss(combination_image)
@@ -224,7 +240,7 @@ def eval_loss_and_grads(x):
     outs = f_outputs([x])
     loss_value = outs[0]
     if len(outs[1:]) == 1:
-        grad_values = outs[1] #将mask内的grads削弱
+        grad_values = outs[1]
         grad_values = grad_values.flatten().astype('float64')
 
     else:
@@ -271,7 +287,6 @@ evaluator = Evaluator()
 #     x = np.zeros_like([1, img_nrows, img_ncols, 3])
 # x = 0 * preprocess_image(base_image_path)
 x = preprocess_image(base_image_path)   # initial with base image
-# plot_model(model, to_file='nerual_transfer_model.png', show_shapes = True)
 for i in range(iterations):
     print('Start of iteration', i)
     start_time = time.time()
@@ -281,8 +296,8 @@ for i in range(iterations):
     # save current generated image
     img = deprocess_image(x.copy())
     fname = result_prefix + '_at_iteration_%d.png' % i
-    if i%5 ==0:
-        imsave(fname, img)
+    imsave(fname, img)
     end_time = time.time()
     print('Image saved as', fname)
     print('Iteration %d completed in %ds' % (i, end_time - start_time))
+pass
