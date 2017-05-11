@@ -48,17 +48,17 @@ from keras.applications import vgg16
 from keras import backend as K
 from vgg16featuremap import *
 
-base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/cat.jpg"
-mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/mask/mask0.png"
+base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/Taylor2.jpg"
+mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/mask/Taymask0.png"
 style_reference_background_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/starry_night.jpg"
 style_reference_key_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/picasso_selfport1907.jpg"
-result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/results/my"
+result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/results/my05"
 iterations = 101
 
 # these are the weights of the different loss components
-total_variation_weight = 8.5e-5 # A larger value may cause blur
+total_variation_weight = 1#8.5e-5 # A larger value may cause blur
 style_weight = 100.0
-content_weight =0.0
+content_weight = 0.0
 # dimensions of the generated picture.
 width, height = load_img(base_image_path).size
 img_nrows = height
@@ -224,7 +224,7 @@ def eval_loss_and_grads(x):
     outs = f_outputs([x])
     loss_value = outs[0]
     if len(outs[1:]) == 1:
-        grad_values = outs[1] #将mask内的grads削弱
+        grad_values = outs[1]
         grad_values = grad_values.flatten().astype('float64')
 
     else:
@@ -281,8 +281,8 @@ for i in range(iterations):
     # save current generated image
     img = deprocess_image(x.copy())
     fname = result_prefix + '_at_iteration_%d.png' % i
-    if i%5 ==0:
+    if i % 5 == 0:
         imsave(fname, img)
+        print('Image saved as', fname)
     end_time = time.time()
-    print('Image saved as', fname)
     print('Iteration %d completed in %ds' % (i, end_time - start_time))

@@ -12,8 +12,8 @@ from keras.applications import vgg16
 from keras import backend as K
 import tensorflow as tf
 
-base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/cat.jpg"
-mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/Kexamples2.0/pic/cat_pascal_voc.png"
+base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/Taylor2.jpeg"
+mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/mask/Taylor2_pascal_voc.png"
 width, height = load_img(base_image_path).size
 # img_nrows = 400 #height
 # img_ncols = int(width * img_nrows / height) #width
@@ -30,7 +30,7 @@ def image_maskprocess(image_path, mask_path):
 
 mask_image = image_maskprocess(base_image_path, mask_path)
 mask_image = np.clip(mask_image, 0, 255).astype('uint8')
-# fname = 'cat10mask.png'
-# imsave(fname, mask_image)
+fname = 'Tay10mask.png'
+imsave(fname, mask_image)
 pylab.imshow(mask_image)
 pylab.show()
