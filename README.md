@@ -15,7 +15,7 @@ This script will produce a combination image which is mixed with two different s
 
 <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/img/picasso_selfport1907.jpg" width=33% height=300 alt="Picasso"> <img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/img/starry_night.jpg" width=33% height=300 alt="starry night"><img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/img/Taylor2.jpg">
 <br><br> Results after 100 iterations <br>
-<img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/results/my05_at_iteration_100.png" width=98% height=550 alt="my05">
+<img src="https://raw.githubusercontent.com/GloryDream/mask-neural-transfer/master/pic/results/my05_at_iteration_100.png" width=50% height=550 alt="my05">
 
 
 
