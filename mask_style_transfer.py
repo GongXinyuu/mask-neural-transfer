@@ -48,11 +48,11 @@ from keras import backend as K
 from vgg16featuremap import *
 
 
-base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/Taylor2.jpg"
-mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/mask/Taymask0.png"
-style_reference_background_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/starry_night.jpg"
-style_reference_key_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/picasso_selfport1907.jpg"
-result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/results/my05"
+base_image_path = "./pic/img/Taylor2.jpg"
+mask_path = "./pic/mask/Taymask0.png"
+style_reference_background_image_path = "./pic/img/starry_night.jpg"
+style_reference_key_image_path = "./pic/img/picasso_selfport1907.jpg"
+result_prefix = "./pic/results/my05"
 iterations = 101
 
 # these are the weights of the different loss components
