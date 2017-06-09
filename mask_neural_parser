@@ -46,19 +46,40 @@ from keras.utils import plot_model
 from keras.applications import vgg16
 from keras import backend as K
 from vgg16featuremap import *
+import argparse
 
+parser = argparse.ArgumentParser(description='Neural style transfer with Keras.')
+parser.add_argument('base_image_path', metavar='base', type=str,
+                    help='Path to the image to transform.')
+parser.add_argument('mask_path', metavar='mask', type=str,
+                    help='Path to the mask image.')
+parser.add_argument('style_reference_background_image_path', metavar='ref_back', type=str,
+                    help='Path to the background style reference image.')
+parser.add_argument('style_reference_key_image_path', metavar='ref_key', type=str,
+                    help='Path to the key element style reference image.')
+parser.add_argument('result_prefix', metavar='res_prefix', type=str,
+                    help='Prefix for the saved results.')
+parser.add_argument('--iter', type=int, default=10, required=False,
+                    help='Number of iterations to run.')
+parser.add_argument('--content_weight', type=float, default=0, required=False,
+                    help='Content weight.')
+parser.add_argument('--style_weight', type=float, default=100.0, required=False,
+                    help='Style weight.')
+parser.add_argument('--tv_weight', type=float, default=1.0, required=False,
+                    help='Total Variation weight.')
 
-base_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/Taylor2.jpg"
-mask_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/mask/Taymask0.png"
-style_reference_background_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/starry_night.jpg"
-style_reference_key_image_path = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/img/picasso_selfport1907.jpg"
-result_prefix = "/Users/gxy/Desktop/CS/CNN/Project/keras/neural_transfer/pic/results/my05"
-iterations = 101
+args = parser.parse_args()
+base_image_path = args.base_image_path
+mask_path = args.mask_path
+style_reference_background_image_path = args.style_reference_background_image_path
+style_reference_key_image_path = args.style_reference_key_image_path
+result_prefix = args.result_prefix
+iterations = args.iter
 
 # these are the weights of the different loss components
 total_variation_weight = 1#8.5e-5 # A larger value may cause blur
-style_weight = 100.0
-content_weight = 0.0
+style_weight = args.style_weight
+content_weight = args.content_weight
 # dimensions of the generated picture.
 width, height = load_img(base_image_path).size
 img_nrows = height
